@@ -63,11 +63,11 @@ def write_jsonl_file(file_path, data):
             f.write(json.dumps(line, ensure_ascii=False) + '\n')
 
 
-path = "E:\\NEUIR_GITHUB\\INTERVENOR\\demo\\prompts\\test_cases_generate.txt"
+path = "./prompts/test_cases_generate.txt"
 with open(path,encoding="utf-8") as f:
     test_cases_generate_prompt = f.read()
 
-path = "E:\\NEUIR_GITHUB\\INTERVENOR\\demo\\prompts\\code_repair.txt"
+path = "./prompts/code_repair.txt"
 with open(path,encoding="utf-8") as f:
     code_repair_prompt = f.read()
 
