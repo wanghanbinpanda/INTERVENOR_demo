@@ -63,14 +63,114 @@ def write_jsonl_file(file_path, data):
             f.write(json.dumps(line, ensure_ascii=False) + '\n')
 
 
-path = "./prompts/test_cases_generate.txt"
-with open(path,encoding="utf-8") as f:
-    test_cases_generate_prompt = f.read()
+# path = "./prompts/test_cases_generate.txt"
+# with open(path,encoding="utf-8") as f:
+#     test_cases_generate_prompt = f.read()
+test_cases_generate_prompt = """
+You are a test case design assistant, and your task is to design test cases based on the given problem description and code, and then use these test cases to test whether the code is correct or not.Please analyze the problem description and then design test cases to verify the code.(Note: When design test cases, you should ignore the code and only according to the probelm description. If there are test cases in the poblem description, just use then and do not provide other test cases)
+you should originaze the code and the tese cases you designed, for example, you can use assert statements or other format to check the output of the code.
+you should put the test code between <test> and </test> to make it a valid code block that can be executed by Python interpreter.
 
-path = "./prompts/code_repair.txt"
-with open(path,encoding="utf-8") as f:
-    code_repair_prompt = f.read()
+Problem:
+Calculate the sum of two integers.
 
+Code(may contain bugs):
+def sum(a,b):
+    sum = a ++ b
+    return sum
+
+Test Code:
+Ignoring the code and focusing only on the problem description, here are some test cases to verify the functionality of a correct "sum of two integers" function:
+
+Test case for positive integers:
+Input: a = 5, b = 3
+Expected Output: 8
+Test case for negative integers:
+Input: a = -5, b = -3
+Expected Output: -8
+Test case for a positive and a negative integer:
+Input: a = 5, b = -3
+Expected Output: 2
+Test case for zero and a non-zero integer:
+Input: a = 0, b = 7
+Expected Output: 7
+Test case for large integers (to ensure there's no overflow):
+Input: a = 1000000, b = 999999
+Expected Output: 1999999
+
+Based on the test cases, we can design the following test code(do not modify the code user provided):
+<test>
+def sum(a,b):
+    sum = a ++ b
+    return sum
+
+assert sum(5, 3) == 8, "Test case for positive integers failed: Expected 8, got different result"
+assert sum(-5, -3) == -8, "Test case for negative integers failed: Expected -8, got different result"
+assert sum(5, -3) == 2, "Test case for a positive and a negative integer failed: Expected 2, got different result"
+assert sum(0, 7) == 7, "Test case for zero and a non-zero integer failed: Expected 7, got different result"
+assert sum(1000000, 999999) == 1999999, "Test case for large integers failed: Expected 1999999, got different result"
+</test>
+
+Problem:
+%%%problem%%%
+
+Code(may contain bugs):
+%%%code%%%
+
+Test Code:
+"""
+# path = "./prompts/code_repair.txt"
+# with open(path,encoding="utf-8") as f:
+#     code_repair_prompt = f.read()
+code_repair_prompt = """
+You are an intelligent code fix assistant, and your job is to fix the errors in the code.
+
+You have two tasks:
+Task 1: Generate a chain of code repairs based on the compiler's error messages. The chain of code repairs should analyze the code errors and provide detailed suggestions for fixes. The chain of code repairs should be enclosed within <chain_of_repair> and </chain_of_repair>.
+Task 2: Fix the code according to the chain of code repairs. The fixed code should be enclosed within <repair_code> and </repair_code>.
+
+Problem:
+Calculate the sum of two integers.
+
+Code(may contain bugs):
+def sum(a,b):
+    sum = a plus b
+    return sum
+
+Error Messages:
+Cell In[1], line 2
+    sum = a plus b
+            ^
+SyntaxError: invalid syntax
+
+Repaired Code：
+<chain_of_repair>
+The issue with the code is that the use of the word "plus" is incorrect in Python. In Python, to add two integers, you need to use the "+" operator instead of "plus".
+Additionally, using the variable name "sum" as a function name can cause confusion as there is a built-in function called sum() in Python. Although it is not an error in this case, it is good practice to avoid using built-in function names as variable names.
+Here is the chain of repairs for the code:
+
+Replace "plus" with "+" to perform the addition correctly.
+Consider renaming the function to something other than "sum" to avoid potential confusion.
+</chain_of_repair>
+
+<repair_code>
+def add_two_numbers(a, b):
+    result = a + b
+    return result
+</repair_code>
+
+
+Problem:
+%%%problem%%%
+
+Code(may contain bugs):
+%%%buggy_code%%%
+
+Error Messages:
+%%%error_messages%%%
+
+Repaired Code：
+"""
 with st.sidebar:
     # logo = "demo/figures/logo.png"
     # st.sidebar.image(logo,width=200)
